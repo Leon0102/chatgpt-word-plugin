@@ -15,12 +15,12 @@
   <Description DefaultValue="A ChatGPT add-in for Word" />
 
   <!-- Icon URLs (must be HTTPS in production) -->
-  <IconUrl DefaultValue="https://8a34-58-186-128-132.ngrok-free.app/assets/icon-32.png" />
-  <HighResolutionIconUrl DefaultValue="https://8a34-58-186-128-132.ngrok-free.app/assets/icon-80.png" />
+  <IconUrl DefaultValue="http://word-gpt-plus.savvycom.xyz/assets/icon-32.png" />
+  <HighResolutionIconUrl DefaultValue="http://word-gpt-plus.savvycom.xyz/assets/icon-80.png" />
 
   <!-- Allowed App Domains -->
   <AppDomains>
-    <AppDomain>https://8a34-58-186-128-132.ngrok-free.app</AppDomain>
+    <AppDomain>http://word-gpt-plus.savvycom.xyz</AppDomain>
   </AppDomains>
 
   <!-- Hosts -->
@@ -30,7 +30,7 @@
 
   <!-- Source Location -->
   <DefaultSettings>
-    <SourceLocation DefaultValue="https://8a34-58-186-128-132.ngrok-free.app/index.html" />
+    <SourceLocation DefaultValue="http://word-gpt-plus.savvycom.xyz/index.html" />
   </DefaultSettings>
 
   <!-- Required Permissions -->
@@ -89,15 +89,15 @@
     <!-- Resources -->
     <Resources>
       <bt:Images>
-        <bt:Image id="Icon.16x16" DefaultValue="https://8a34-58-186-128-132.ngrok-free.app/assets/icon-16.png" />
-        <bt:Image id="Icon.32x32" DefaultValue="https://8a34-58-186-128-132.ngrok-free.app/assets/icon-32.png" />
-        <bt:Image id="Icon.80x80" DefaultValue="https://8a34-58-186-128-132.ngrok-free.app/assets/icon-80.png" />
+        <bt:Image id="Icon.16x16" DefaultValue="http://word-gpt-plus.savvycom.xyz/assets/icon-16.png" />
+        <bt:Image id="Icon.32x32" DefaultValue="http://word-gpt-plus.savvycom.xyz/assets/icon-32.png" />
+        <bt:Image id="Icon.80x80" DefaultValue="http://word-gpt-plus.savvycom.xyz/assets/icon-80.png" />
       </bt:Images>
       <bt:Urls>
         <bt:Url id="GetStarted.LearnMoreUrl"
           DefaultValue="https://go.microsoft.com/fwlink/?LinkId=276812" />
-        <bt:Url id="Commands.Url" DefaultValue="https://8a34-58-186-128-132.ngrok-free.app/commands.html" />
-        <bt:Url id="Taskpane.Url" DefaultValue="https://8a34-58-186-128-132.ngrok-free.app/index.html" />
+        <bt:Url id="Commands.Url" DefaultValue="http://word-gpt-plus.savvycom.xyz/commands.html" />
+        <bt:Url id="Taskpane.Url" DefaultValue="http://word-gpt-plus.savvycom.xyz/index.html" />
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="GetStarted.Title" DefaultValue="Get started with ChatGPT!" />

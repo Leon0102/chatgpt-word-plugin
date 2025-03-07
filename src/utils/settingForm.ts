@@ -26,7 +26,7 @@ function useSettingForm() {
     settingForm.value.officialAPIKey =
       localStorage.getItem('officialAPIKey') || API_KEY
     settingForm.value.officialModelSelect =
-      localStorage.getItem('officialModelSelect') || 'gpt-4o'
+      localStorage.getItem('officialModelSelect') || 'gpt-4o-mini'
     // Detect user language or use stored value
     settingForm.value.replyLanguage =
       localStorage.getItem('replyLanguage') ||

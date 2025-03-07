@@ -14,5 +14,8 @@ module.exports = defineConfig({
       })
       return definitions
     })
+  },
+  devServer: {
+    https: true
   }
 })

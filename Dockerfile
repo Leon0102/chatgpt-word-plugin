@@ -14,5 +14,6 @@ RUN yarn run build
 # 第二阶段：使用Nginx构建生产环境镜像
 FROM nginx:alpine
 COPY --from=build-stage /app/dist /usr/share/nginx/html
-EXPOSE 80
+COPY nginx.conf /etc/nginx/nginx.conf
+EXPOSE 80 443
 CMD ["nginx", "-g", "daemon off;"]

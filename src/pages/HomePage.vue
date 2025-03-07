@@ -1,13 +1,13 @@
 <template>
   <div class="container">
-    <el-form label-position="left" label-width="70px">
+    <el-form label-position="left" label-width="70px" style="width: 100%">
       <el-form-item>
         <template #label>
           <span>{{ $t('homeSystem') }}</span>
         </template>
         <el-input
           v-model="systemPrompt"
-          clearable
+          disable
           size="small"
           :placeholder="$t('homeSystemDescription')"
           @blur="handelSystemPromptChange(systemPrompt)"
@@ -53,6 +53,8 @@
           autofocus
           clearable
           size="small"
+          type="textarea"
+          :rows="7"
           :placeholder="$t('homePromptDescription')"
           @blur="handelPromptChange(prompt)"
         />
@@ -100,6 +102,13 @@
         :option-list="insertTypeList"
         placeholder="insertTypePlaceholder"
         @change="handelInsertTypeChange"
+      />
+      <SelectItem
+        v-model="contractType"
+        label="contractType"
+        :option-list="contractTypeList"
+        placeholder="selectContractType"
+        @change="handleContractTypeChange"
       />
     </el-form>
     <div style="width: 100%">
@@ -272,12 +281,23 @@ const errorIssue = ref(false)
 
 // insert type
 const insertType = ref<insertTypes>('replace')
-const insertTypeList = ['replace', 'append', 'newLine', 'NoAction'].map(
-  item => ({
-    label: t(item),
-    value: item
-  })
-)
+const insertTypeList = ['replace', 'newLine', 'NoAction'].map(item => ({
+  label: t(item),
+  value: item
+}))
+
+// Add this to your setup script section where other refs are defined
+const contractType = ref('general')
+const contractTypeList = [
+  { label: 'General', value: 'general' },
+  { label: 'Service Agreement', value: 'service' },
+  { label: 'Employment', value: 'employment' },
+  { label: 'Non-Disclosure', value: 'nda' },
+  { label: 'Sale of Goods', value: 'sale' },
+  { label: 'Lease', value: 'lease' },
+  { label: 'Software License', value: 'software' },
+  { label: 'Consulting', value: 'consulting' }
+]
 
 async function getSystemPromptList() {
   const table = promptDbInstance.table('systemPrompt')
@@ -355,22 +375,30 @@ async function initData() {
     (localStorage.getItem(localStorageKey.insertType) as insertTypes) ||
     'replace'
   systemPrompt.value =
-    localStorage.getItem(localStorageKey.defaultSystemPrompt) ||
-    'Act like a personal assistant.'
+    'Act as AI Legal Assistance. You are helping to review contract and recommend contract terms'
   await getSystemPromptList()
   if (systemPromptList.value.find(item => item.value === systemPrompt.value)) {
     systemPromptSelected.value = systemPrompt.value
   }
   prompt.value = localStorage.getItem(localStorageKey.defaultPrompt) || ''
   await getPromptList()
+  contractType.value =
+    localStorage.getItem(localStorageKey.contractType) || 'general'
   if (promptList.value.find(item => item.value === prompt.value)) {
     promptSelected.value = prompt.value
   }
 }
 
+function handleContractTypeChange(val: string) {
+  contractType.value = val
+  localStorage.setItem(localStorageKey.contractType, val)
+}
+
 function handelInsertTypeChange(val: insertTypes) {
   insertType.value = val
   localStorage.setItem(localStorageKey.insertType, val)
+  // Trigger text selection handler to update prompt when insert type changes
+  handleTextSelection()
 }
 
 async function template(taskType: keyof typeof buildInPrompt | 'custom') {
@@ -385,7 +413,23 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
       return range.text
     })
   }
+  const getDocumentText = async () => {
+    return Word.run(async context => {
+      const body = context.document.body // Get the document body
+      body.load('text') // Load text content
+      await context.sync()
+      return body.text // Return the full document text
+    })
+  }
+
+  const previousText = await getPreviousText()
+
+  const documentText = await getDocumentText()
+
   const selectedText = await getSeletedText()
+
+  console.log(selectedText)
+  // console.log(previousText, 'previousText')
   if (taskType === 'custom') {
     if (systemPrompt.value.includes('{language}')) {
       systemMessage = systemPrompt.value.replace(
@@ -395,10 +439,78 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
     } else {
       systemMessage = systemPrompt.value
     }
+
+    // Append documentText when selectedText is available
     if (userMessage.includes('{text}')) {
       userMessage = userMessage.replace('{text}', selectedText)
+    } else if (selectedText) {
+      if (insertType.value === 'replace') {
+        userMessage = `Reply in ${settingForm.value.replyLanguage}
+    This is a ${contractType.value} contract. Based on the full context, suggest a suitable replacement for the following section:
+
+      **Full Contract:**
+      "${documentText}"
+
+      **Section to Replace:**
+      "${selectedText}"
+
+    Ensure the replacement aligns with the contract's style and legal accuracy for ${contractType.value} contracts.
+    Provide an improved version of the clause with enhanced legal coverage. Only return the new improved version without explanation.`
+      } else if (insertType.value === 'append') {
+        userMessage = `Reply in ${settingForm.value.replyLanguage}
+    This is a ${contractType.value} contract. Based on the full context, suggest suitable additional text to append to the following section:
+
+      **Full Contract:**
+      "${documentText}"
+
+      **Section to Append To:**
+      "${selectedText}"
+
+    Ensure the appended text flows naturally from the existing text and aligns with the contract's style and legal accuracy for ${contractType.value} contracts.
+    Only return the text to be appended without explanation.`
+      } else if (insertType.value === 'newLine') {
+        userMessage = `Reply in ${settingForm.value.replyLanguage}
+    This is a ${contractType.value} contract. Based on the full context, suggest a new clause or paragraph to be inserted after the following section:
+
+      **Full Contract:**
+      "${documentText}"
+
+      **Section After Which to Insert:**
+      "${selectedText}"
+
+    Ensure the new clause aligns with the contract's style and legal accuracy for ${contractType.value} contracts.
+    Only return the new clause without explanation.`
+      } else {
+        userMessage = `Reply in ${settingForm.value.replyLanguage}
+    This is a ${contractType.value} contract. Based on the full context, suggest a suitable ${insertType.value} for the following section:
+
+      **Full Contract:**
+      "${documentText}"
+
+      **Section to Modify:**
+      "${selectedText}"
+
+    Ensure the update aligns with the contract's style and legal accuracy for ${contractType.value} contracts.
+    Provide an improved version of the clause with enhanced legal coverage. Only return the new improved version without explanation.`
+      }
+    } else if (insertType.value === 'newLine') {
+      userMessage = `Reply in ${settingForm.value.replyLanguage}
+
+        [Clause Category]:
+        ${documentText}
+
+        [Section After Which to Insert]:
+        ${previousText}
+
+        [Insert Type]:
+        ${insertType.value}
+
+        [New Clause]:
+        ${prompt.value}
+
+        Provide an improved version of the clause with enhanced legal coverage. Only return the new improved version without explanation.`
     } else {
-      userMessage = `Reply in ${settingForm.value.replyLanguage} ${prompt.value} ${selectedText}`
+      userMessage = `Reply in ${settingForm.value.replyLanguage} ${prompt.value}`
     }
   } else {
     systemMessage = buildInPrompt[taskType].system(
@@ -413,6 +525,7 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
     settingForm.value.api === 'official' &&
     settingForm.value.officialAPIKey
   ) {
+    console.log(userMessage)
     const config = API.official.setConfig(
       settingForm.value.officialAPIKey,
       settingForm.value.officialBasePath
@@ -742,7 +855,117 @@ const detectLanguage = () => {
     : settingPreset.replyLanguage.defaultValue
 }
 
-onMounted(detectLanguage)
+// ✅ Detect selected text and update `settingForm.value.replyLanguage`const handleTextSelection = async () => {
+
+const handleTextSelection = async () => {
+  return Word.run(async context => {
+    const range = context.document.getSelection()
+    range.load('text')
+    await context.sync()
+
+    // Get current insert type from local storage
+    const currentInsertType = localStorage.getItem('insertType') || 'replace'
+    // Different prompt handling based on insert type
+    if (
+      currentInsertType === 'replace' &&
+      range.text &&
+      range.text.trim() !== ''
+    ) {
+      // For replace: use the selected text
+      prompt.value = `I would like a new term to replace this term: ${range.text}. Please return the new term only.`
+    } else if (currentInsertType === 'newLine') {
+      // For newLine: keep whatever is in the prompt field
+      // Do nothing to preserve user's existing prompt
+      // const previousText = await getPreviousText()
+      // const text = previousText ?? range.text
+      prompt.value = `
+        [Role]:
+        You are an expert contract lawyer specializing in drafting legally sound and enforceable contract clauses. Your task is to generate a new clause based on the given category, ensuring it aligns with industry best practices and legal standards.
+
+        [Contract Type]:
+        "${contractType.value}"
+
+        [Key Considerations]:
+        - Clearly define rights and obligations for both parties.
+        - Ensure legal enforceability and risk mitigation.
+        - Align with industry standards and best practices.
+        - Tailor to applicable jurisdiction (if detected).
+
+        [Preferred Output]:`
+    } else {
+      // When no text is selected and not in append mode
+      prompt.value = ''
+    }
+  })
+}
+
+const getPreviousText = async () => {
+  try {
+    return await Word.run(async context => {
+      // Get the current selection
+      const selection = context.document.getSelection()
+
+      // Get the current paragraph containing the selection
+      const currentParagraph = selection.paragraphs.getFirst()
+      currentParagraph.load('text')
+
+      // Get all paragraphs in the document
+      const paragraphs = context.document.body.paragraphs
+      paragraphs.load('items')
+
+      await context.sync()
+
+      // Find the index of the current paragraph
+      let currentIndex = -1
+      for (let i = 0; i < paragraphs.items.length; i++) {
+        if (paragraphs.items[i].text === currentParagraph.text) {
+          currentIndex = i
+          break
+        }
+      }
+
+      // Get the previous paragraph text if it exists
+      if (currentIndex > 0) {
+        const previousParagraph = paragraphs.items[currentIndex - 1]
+        return previousParagraph.text.trim()
+      } else {
+        return '' // No previous paragraph found
+      }
+    })
+  } catch (error) {
+    console.error('Error getting previous text:', error)
+    return ''
+  }
+}
+
+const setupWordTracking = () => {
+  Office.onReady()
+    .then(() => {
+      if (Office.context.document) {
+        Office.context.document.addHandlerAsync(
+          Office.EventType.DocumentSelectionChanged,
+          async () => {
+            await handleTextSelection() // Auto-update `prompt.value`
+          },
+          result => {
+            if (result.status !== Office.AsyncResultStatus.Succeeded) {
+              console.error('Failed to attach event handler:', result.error)
+            }
+          }
+        )
+      } else {
+        console.error('Office.context.document is not available.')
+      }
+    })
+    .catch(err => {
+      console.error('Office.js failed to initialize:', err)
+    })
+}
+
+onMounted(() => {
+  detectLanguage()
+  setupWordTracking()
+})
 </script>
 
 <style scoped>
