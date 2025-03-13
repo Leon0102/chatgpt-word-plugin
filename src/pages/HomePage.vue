@@ -1,119 +1,186 @@
 <template>
-  <div class="container">
-    <!-- Document Template Dropdown -->
-    <div class="action-item">
-      <FileOutlined class-name="icon-blue" />
-      <a-dropdown>
-        <a class="action-text">
-          Create a draft using a template <DownOutlined />
-        </a>
-        <template #overlay>
-          <a-menu>
-            <a-menu-item key="1">Template 1</a-menu-item>
-            <a-menu-item key="2">Template 2</a-menu-item>
-          </a-menu>
+  <div class="p-6 relative">
+    <!-- Template Dropdown -->
+    <div
+      class="bg-gray-100 rounded-lg shadow-sm p-4 mb-4 flex items-center justify-center"
+    >
+      <el-icon class="text-blue-600 mr-3 text-xl flex-shrink-0"
+        ><Document
+      /></el-icon>
+      <el-dropdown>
+        <span
+          class="flex items-center text-blue-700 font-medium cursor-pointer border-b border-gray-200 pb-2"
+        >
+          Create a draft using a template
+          <el-icon class="ml-2 pb-3"><ArrowDown /></el-icon>
+        </span>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item>Service Agreement</el-dropdown-item>
+            <el-dropdown-item>Non-Disclosure Agreement</el-dropdown-item>
+            <el-dropdown-item>Employment Contract</el-dropdown-item>
+          </el-dropdown-menu>
         </template>
-      </a-dropdown>
+      </el-dropdown>
     </div>
 
-    <!-- Partial Review -->
-    <div class="action-section">
-      <div class="action-header">Partial Review</div>
-      <div class="action-item">
-        <SearchOutlined class-name="icon-blue" />
-        <span class="action-text"
-          >Document summary and analysis of toxic provision</span
-        >
+    <!-- Review Options Cards -->
+    <div class="space-y-3">
+      <!-- Partial Review Card -->
+      <div
+        class="bg-blue-50 rounded-lg p-4 cursor-pointer hover:bg-blue-100 transition-colors"
+      >
+        <div class="flex items-center">
+          <div class="mr-3 flex-shrink-0 flex items-center justify-center w-6">
+            <el-icon class="text-blue-600 text-lg"><Search /></el-icon>
+          </div>
+          <div>
+            <h3 class="font-medium text-blue-800 flex">Partial Review</h3>
+            <p class="text-sm text-blue-700">
+              Document summary and analysis of toxic provision
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Full Review Button -->
-    <a-button type="primary" block class="full-review-button">
-      <div class="action-item white">
-        <FileOutlined />
-        <span>Analyze the toxicity of the selected text</span>
+      <!-- Full Review Card - Selected -->
+      <div class="bg-blue-600 rounded-lg p-4 cursor-pointer">
+        <div class="flex items-center">
+          <div class="mr-3 flex-shrink-0 flex items-center justify-center w-6">
+            <el-icon class="text-white text-lg"><Document /></el-icon>
+          </div>
+          <div>
+            <h3 class="font-medium text-white flex">Full Review</h3>
+            <p class="text-sm text-blue-100">
+              Analyze the toxicity of the selected text
+            </p>
+          </div>
+        </div>
       </div>
-    </a-button>
 
-    <!-- Recommend Next Content -->
-    <div class="action-section">
-      <div class="action-header">Recommend Next Content</div>
-      <div class="action-item">
-        <ArrowRightOutlined class-name="icon-blue" />
-        <span class="action-text"
-          >Suggestion for next provision based on context</span
-        >
+      <!-- Recommend Next Content -->
+      <div
+        class="bg-blue-50 rounded-lg p-4 cursor-pointer hover:bg-blue-100 transition-colors"
+      >
+        <div class="flex items-center">
+          <div class="mr-3 flex-shrink-0 flex items-center justify-center w-6">
+            <el-icon class="text-blue-600 text-lg"><ArrowRight /></el-icon>
+          </div>
+          <div>
+            <h3 class="font-medium text-blue-800 flex">
+              Recommend Next Content
+            </h3>
+            <p class="text-sm text-blue-700">
+              Suggestion for next provision based on context
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Full Document Analysis Result -->
-    <div class="action-item document-analysis">
-      <div class="document-analysis-left">
-        <FileOutlined class-name="icon-blue" />
-        <span class="action-text">Full document analysis result</span>
+      <!-- Full Document Analysis Result -->
+      <div class="rounded-lg p-4 cursor-pointer">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <div
+              class="mr-3 flex-shrink-0 flex items-center justify-center w-6"
+            >
+              <el-icon class="text-blue-600 text-lg"><Document /></el-icon>
+            </div>
+            <h3 class="font-medium text-gray-800 flex">
+              Full document analysis result
+            </h3>
+          </div>
+          <div class="flex items-center">
+            <div
+              class="mr-3 flex-shrink-0 flex items-center justify-center w-6 gap-1"
+            >
+              <el-icon class="!text-red-600 text-lg"><InfoFilled /></el-icon>
+              <p class="text-sm text-red-700 border-b border-red-700">Report</p>
+            </div>
+          </div>
+        </div>
       </div>
-      <a-button type="link" danger>Report</a-button>
     </div>
 
     <!-- Document Summary -->
-    <div class="document-summary">
-      <h3>Document Summary</h3>
-      <p>
+    <div class="mt-6 bg-blue-50 rounded-lg p-4">
+      <h3 class="font-bold text-gray-800 mb-2">Document Summary</h3>
+      <p class="text-sm text-blue-800 mb-2">
         This contract is a service provision contract between Sample Enterprise
-        Co., Ltd. (Party A) and Test Company Co., Ltd. (Party B) and includes
+        Co., Ltd. (Party A) and Test Company Co., Ltd. (Party B), and includes
         the following main content:
       </p>
+    </div>
 
-      <div class="contract-details">
-        <p>Contracting party information and contract information:</p>
-        <ul>
-          <li>- Purpose of the contract and scope of services;</li>
-          <li>- Provisions regarding liability and compensation;</li>
-          <li>- Terms and procedures for contract termination;</li>
-          <li>- Cost settlement method;</li>
-        </ul>
+    <!-- Toxic Provisions Section (new) -->
+    <div class="mt-4 bg-red-50 rounded-lg p-4">
+      <div class="flex items-center mb-2">
+        <el-icon class="text-red-600 mr-2 text-lg flex-shrink-0"
+          ><Warning
+        /></el-icon>
+        <h3 class="font-bold text-gray-800">Discovery of Toxic Provisions</h3>
       </div>
+      <ul class="text-sm text-red-800 space-y-1 list-none">
+        <li>
+          - Article 2, Paragraph 1: Unilateral Liability Electricity Provisions
+        </li>
+        <li>
+          - Article 2, Paragraph 2: Imposition of Liability for Excessive
+          Damages
+        </li>
+        <li>
+          - Article 2, Paragraph 3: Right to Unilaterally Terminate a Contract
+        </li>
+        <li>- Article 2, Paragraph 4: Unfair Cost Reimbursement Provisions</li>
+      </ul>
+      <p class="text-sm text-red-800 mt-2">
+        To edit a toxic clause, select the section and use the Review Section
+        function
+      </p>
+    </div>
 
-      <p class="warning-note">
-        Note: The provided advice and reports do not replace final review
+    <!-- Disclaimer -->
+    <div class="mt-2 text-center">
+      <p class="text-xs text-red-600">
+        AI does not provide legal advice and users retain final review
         responsibility.
       </p>
     </div>
 
-    <!-- Footer Actions -->
-    <div class="footer-actions">
-      <a-button>Cancel</a-button>
-      <a-button type="primary">Apply Changes</a-button>
+    <!-- Action Buttons -->
+    <div class="mt-4 mb-6 w-full flex justify-between fixed bottom-0">
+      <el-button>Cancel</el-button>
+      <el-button class="mr-12 !bg-blue-600" type="primary"
+        >Apply Changes</el-button
+      >
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import {
-  FileOutlined,
-  SearchOutlined,
-  ArrowRightOutlined,
-  DownOutlined
-} from '@ant-design/icons-vue'
+  ArrowDown,
+  ArrowRight,
+  Document,
+  InfoFilled,
+  Search,
+  Warning
+} from '@element-plus/icons-vue'
+
 import { ElMessage } from 'element-plus'
-import { CirclePlus, Remove } from '@element-plus/icons-vue'
 import { onBeforeMount, onMounted, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 
 import API from '@/api'
 
-import { buildInPrompt } from '@/utils/constant'
 import { promptDbInstance } from '@/store/promtStore'
+import { buildInPrompt } from '@/utils/constant'
 
 import { checkAuth } from '@/utils/common'
 import { localStorageKey } from '@/utils/enum'
 import useSettingForm from '@/utils/settingForm'
 import { settingPreset } from '@/utils/settingPreset'
-
-import SelectItem from '@/components/SelectItem.vue'
-import HomePageDialog from '@/components/HomePageDialog.vue'
-import HomePageAddDialog from '@/components/HomePageAddDialog.vue'
 
 const { t } = useI18n()
 
@@ -150,10 +217,10 @@ const errorIssue = ref(false)
 
 // insert type
 const insertType = ref<insertTypes>('replace')
-const insertTypeList = ['replace', 'newLine', 'NoAction'].map(item => ({
-  label: t(item),
-  value: item
-}))
+// const insertTypeList = ['replace', 'newLine', 'NoAction'].map(item => ({
+//   label: t(item),
+//   value: item
+// }))
 
 // Add this to your setup script section where other refs are defined
 const contractType = ref('general')
@@ -836,130 +903,27 @@ onMounted(() => {
   setupWordTracking()
 })
 </script>
+
 <style scoped>
 .container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f5f5f5;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
 }
 
-.action-item {
+.input-group {
   display: flex;
   align-items: center;
-  padding: 10px 0;
-  background-color: white;
-  border-radius: 4px;
-  margin-bottom: 15px;
-  padding-left: 15px;
-  padding-right: 15px;
-  gap: 8px;
-}
-
-.document-analysis {
-  display: flex;
-  justify-content: space-between;
-}
-
-.document-analysis-left {
-  display: flex;
-  align-items: center;
-}
-
-.icon-blue {
-  color: #1890ff;
-  margin-right: 10px;
-  font-size: 18px;
-}
-
-.action-text {
-  font-size: 14px;
-  color: #1890ff;
-}
-
-.action-section {
-  margin-bottom: 15px;
-}
-
-.action-header {
-  font-size: 14px;
-  color: #1890ff;
-  font-weight: 500;
-  margin-bottom: 5px;
-}
-
-.full-review-button {
-  height: auto;
-  padding: 0;
-  margin-bottom: 15px;
-}
-
-.full-review-button .action-item {
-  background-color: transparent;
-  margin-bottom: 0;
-}
-
-.white {
-  color: white;
-}
-
-.white .action-text {
-  color: white;
-}
-
-.document-summary {
-  background-color: white;
-  padding: 20px;
-  border-radius: 4px;
-  margin-top: 25px;
   margin-bottom: 20px;
 }
 
-.document-summary h3 {
-  font-size: 16px;
-  margin-top: 0;
-  margin-bottom: 15px;
-  font-weight: 600;
+.api-button {
+  margin-left: 10px;
+  border-radius: 10px;
 }
 
-.document-summary p {
-  font-size: 14px;
-  margin-bottom: 15px;
-  line-height: 1.5;
-}
-
-.contract-details {
-  margin-left: 0;
-  margin-bottom: 15px;
-}
-
-.contract-details p {
-  margin-bottom: 5px;
-  font-weight: 500;
-}
-
-.contract-details ul {
-  list-style: none;
-  padding-left: 0;
-  margin-top: 5px;
-}
-
-.contract-details li {
-  font-size: 14px;
-  margin-bottom: 5px;
-}
-
-.warning-note {
-  color: #ff4d4f;
-  font-size: 12px;
-  border-top: 1px solid #ffccc7;
-  padding-top: 10px;
-  margin-top: 15px;
-}
-
-.footer-actions {
-  display: flex;
-  justify-content: space-between;
+.result-group {
+  width: 100%;
 }
 </style>

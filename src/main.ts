@@ -4,6 +4,7 @@ import { i18n } from './i18n'
 import router from './router'
 import ElementUI from 'element-plus'
 import 'element-plus/dist/index.css'
+import './index.css'
 
 window.Office.onReady(() => {
   const app = createApp(App)
