@@ -1,231 +1,100 @@
 <template>
   <div class="container">
-    <el-form label-position="left" label-width="70px" style="width: 100%">
-      <el-form-item>
-        <template #label>
-          <span>{{ $t('homeSystem') }}</span>
+    <!-- Document Template Dropdown -->
+    <div class="action-item">
+      <FileOutlined class-name="icon-blue" />
+      <a-dropdown>
+        <a class="action-text">
+          Create a draft using a template <DownOutlined />
+        </a>
+        <template #overlay>
+          <a-menu>
+            <a-menu-item key="1">Template 1</a-menu-item>
+            <a-menu-item key="2">Template 2</a-menu-item>
+          </a-menu>
         </template>
-        <el-input
-          v-model="systemPrompt"
-          disable
-          size="small"
-          :placeholder="$t('homeSystemDescription')"
-          @blur="handelSystemPromptChange(systemPrompt)"
-        />
-        <span>
-          <el-select
-            v-model="systemPromptSelected"
-            size="small"
-            placeholder="Select a system prompt"
-            @change="handelSystemPromptChange"
-          >
-            <el-option
-              v-for="item in systemPromptList"
-              :key="item.value"
-              :label="item.key"
-              :value="item.value"
-            />
-          </el-select>
-          <el-icon
-            color="#409EFF"
-            style="cursor: pointer; margin-left: 5px; vertical-align: middle"
-            size="15px"
-            @click="addSystemPromptVisible = true"
-          >
-            <CirclePlus />
-          </el-icon>
-          <el-icon
-            color="red"
-            style="cursor: pointer; margin-left: 5px; vertical-align: middle"
-            size="15px"
-            @click="removeSystemPromptVisible = true"
-          >
-            <Remove />
-          </el-icon>
-        </span>
-      </el-form-item>
-      <el-form-item>
-        <template #label>
-          <span>{{ $t('homePrompt') }}</span>
-        </template>
-        <el-input
-          v-model="prompt"
-          autofocus
-          clearable
-          size="small"
-          type="textarea"
-          :rows="7"
-          :placeholder="$t('homePromptDescription')"
-          @blur="handelPromptChange(prompt)"
-        />
-        <span>
-          <el-select
-            v-model="promptSelected"
-            size="small"
-            placeholder="Select a prompt"
-            @change="handelPromptChange"
-          >
-            <el-option
-              v-for="item in promptList"
-              :key="item.value"
-              :label="item.key"
-              :value="item.value"
-            />
-          </el-select>
-          <el-icon
-            color="#409EFF"
-            style="cursor: pointer; margin-left: 5px; vertical-align: middle"
-            size="15px"
-            @click="addPromptVisible = true"
-          >
-            <CirclePlus />
-          </el-icon>
-          <el-icon
-            color="red"
-            style="cursor: pointer; margin-left: 5px; vertical-align: middle"
-            size="15px"
-            @click="removePromptVisible = true"
-          >
-            <Remove />
-          </el-icon>
-        </span>
-      </el-form-item>
-      <SelectItem
-        v-model="settingForm.replyLanguage"
-        label="replyLanguageLabel"
-        :option-list="settingPreset.replyLanguage.optionList"
-        placeholder="replyLanguagePlaceholder"
-      />
-      <SelectItem
-        v-model="insertType"
-        label="insertType"
-        :option-list="insertTypeList"
-        placeholder="insertTypePlaceholder"
-        @change="handelInsertTypeChange"
-      />
-      <SelectItem
-        v-model="contractType"
-        label="contractType"
-        :option-list="contractTypeList"
-        placeholder="selectContractType"
-        @change="handleContractTypeChange"
-      />
-    </el-form>
-    <div style="width: 100%">
-      <el-progress
-        v-if="loading"
-        :percentage="50"
-        indeterminate
-        :duration="5"
-        status="warning"
-        style="widows: 100%"
-      />
+      </a-dropdown>
     </div>
-    <el-button-group class="input-group" style="margin-top: 5px; display: none">
-      <el-button
-        v-for="item in actionList"
-        :key="item"
-        class="api-button"
-        type="primary"
-        size="small"
-        :disabled="loading"
-        @click="performAction(item)"
-      >
-        {{ $t(item) }}
-      </el-button>
 
-      <el-button
-        class="api-button"
-        type="warning"
-        size="small"
-        @click="settings"
-      >
-        {{ $t('settings') }}
-      </el-button>
-    </el-button-group>
-    <div
-      style="
-        margin-top: 5px;
-        align-items: center;
-        display: flex;
-        margin-bottom: 5px;
-      "
-    >
-      <el-button-group>
-        <el-button
-          class="api-button"
-          type="success"
-          size="default"
-          :disabled="loading"
-          @click="StartChat"
+    <!-- Partial Review -->
+    <div class="action-section">
+      <div class="action-header">Partial Review</div>
+      <div class="action-item">
+        <SearchOutlined class-name="icon-blue" />
+        <span class="action-text"
+          >Document summary and analysis of toxic provision</span
         >
-          {{ $t('start') }}
-        </el-button>
-        <el-button
-          v-if="
-            ['azure', 'official', 'gemini', 'ollama', 'groq'].includes(
-              settingForm.api
-            )
-          "
-          class="api-button"
-          type="success"
-          size="default"
-          :disabled="loading"
-          @click="continueChat"
+      </div>
+    </div>
+
+    <!-- Full Review Button -->
+    <a-button type="primary" block class="full-review-button">
+      <div class="action-item white">
+        <FileOutlined />
+        <span>Analyze the toxicity of the selected text</span>
+      </div>
+    </a-button>
+
+    <!-- Recommend Next Content -->
+    <div class="action-section">
+      <div class="action-header">Recommend Next Content</div>
+      <div class="action-item">
+        <ArrowRightOutlined class-name="icon-blue" />
+        <span class="action-text"
+          >Suggestion for next provision based on context</span
         >
-          {{ $t('continue') }}
-        </el-button>
-      </el-button-group>
+      </div>
     </div>
-    <div class="result-group">
-      <el-input
-        v-model="result"
-        type="textarea"
-        autosize
-        :row="5"
-        :aria-placeholder="$t('result')"
-      />
+
+    <!-- Full Document Analysis Result -->
+    <div class="action-item document-analysis">
+      <div class="document-analysis-left">
+        <FileOutlined class-name="icon-blue" />
+        <span class="action-text">Full document analysis result</span>
+      </div>
+      <a-button type="link" danger>Report</a-button>
     </div>
-    <HomePageAddDialog
-      v-model:addVisible="addSystemPromptVisible"
-      v-model:addAlias="addSystemPromptAlias"
-      v-model:addValue="addSystemPromptValue"
-      title="addSystemPrompt"
-      alias-label="addSystemPromptAlias"
-      alias-placeholder="addSystemPromptAliasDescription"
-      prompt-label="homeSystem"
-      prompt-placeholder="addSystemPromptDescription"
-      @add="addSystemPrompt"
-    />
-    <HomePageAddDialog
-      v-model:addVisible="addPromptVisible"
-      v-model:addAlias="addPromptAlias"
-      v-model:addValue="addPromptValue"
-      title="addPrompt"
-      alias-label="addPromptAlias"
-      alias-placeholder="addPromptAliasDescription"
-      prompt-label="homePrompt"
-      prompt-placeholder="homePromptDescription"
-      @add="addPrompt"
-    />
-    <HomePageDialog
-      v-model:removeVisible="removeSystemPromptVisible"
-      v-model:removeValue="removeSystemPromptValue"
-      title="removeSystemPrompt"
-      :option-list="systemPromptList"
-      @remove="removeSystemPrompt"
-    />
-    <HomePageDialog
-      v-model:removeVisible="removePromptVisible"
-      v-model:removeValue="removePromptValue"
-      title="removePrompt"
-      :option-list="promptList"
-      @remove="removePrompt"
-    />
+
+    <!-- Document Summary -->
+    <div class="document-summary">
+      <h3>Document Summary</h3>
+      <p>
+        This contract is a service provision contract between Sample Enterprise
+        Co., Ltd. (Party A) and Test Company Co., Ltd. (Party B) and includes
+        the following main content:
+      </p>
+
+      <div class="contract-details">
+        <p>Contracting party information and contract information:</p>
+        <ul>
+          <li>- Purpose of the contract and scope of services;</li>
+          <li>- Provisions regarding liability and compensation;</li>
+          <li>- Terms and procedures for contract termination;</li>
+          <li>- Cost settlement method;</li>
+        </ul>
+      </div>
+
+      <p class="warning-note">
+        Note: The provided advice and reports do not replace final review
+        responsibility.
+      </p>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="footer-actions">
+      <a-button>Cancel</a-button>
+      <a-button type="primary">Apply Changes</a-button>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import {
+  FileOutlined,
+  SearchOutlined,
+  ArrowRightOutlined,
+  DownOutlined
+} from '@ant-design/icons-vue'
 import { ElMessage } from 'element-plus'
 import { CirclePlus, Remove } from '@element-plus/icons-vue'
 import { onBeforeMount, onMounted, ref, watch } from 'vue'
@@ -967,27 +836,130 @@ onMounted(() => {
   setupWordTracking()
 })
 </script>
-
 <style scoped>
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 50px;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
-.input-group {
+.action-item {
   display: flex;
   align-items: center;
+  padding: 10px 0;
+  background-color: white;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  gap: 8px;
+}
+
+.document-analysis {
+  display: flex;
+  justify-content: space-between;
+}
+
+.document-analysis-left {
+  display: flex;
+  align-items: center;
+}
+
+.icon-blue {
+  color: #1890ff;
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+.action-text {
+  font-size: 14px;
+  color: #1890ff;
+}
+
+.action-section {
+  margin-bottom: 15px;
+}
+
+.action-header {
+  font-size: 14px;
+  color: #1890ff;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.full-review-button {
+  height: auto;
+  padding: 0;
+  margin-bottom: 15px;
+}
+
+.full-review-button .action-item {
+  background-color: transparent;
+  margin-bottom: 0;
+}
+
+.white {
+  color: white;
+}
+
+.white .action-text {
+  color: white;
+}
+
+.document-summary {
+  background-color: white;
+  padding: 20px;
+  border-radius: 4px;
+  margin-top: 25px;
   margin-bottom: 20px;
 }
 
-.api-button {
-  margin-left: 10px;
-  border-radius: 10px;
+.document-summary h3 {
+  font-size: 16px;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-weight: 600;
 }
 
-.result-group {
-  width: 100%;
+.document-summary p {
+  font-size: 14px;
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+.contract-details {
+  margin-left: 0;
+  margin-bottom: 15px;
+}
+
+.contract-details p {
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.contract-details ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 5px;
+}
+
+.contract-details li {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.warning-note {
+  color: #ff4d4f;
+  font-size: 12px;
+  border-top: 1px solid #ffccc7;
+  padding-top: 10px;
+  margin-top: 15px;
+}
+
+.footer-actions {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
